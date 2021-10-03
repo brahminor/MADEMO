@@ -362,9 +362,9 @@ odoo.define('tit_pos_order.PaymentScreenButton', function(require) {
                     interface de commande et le tous soit à 0)
                     */ 
                     this.env.pos.delete_current_order();
-                    this.env.pos.add_new_order();
+                    var v = this.env.pos.add_new_order();
                     this.env.pos.delete_current_order();
-                    //this.showScreen('ProductScreen');
+                    this.env.pos.set_order(v);
                 }  }   } 
 
                 reload_cmd_en_attente(commande_ancienne){

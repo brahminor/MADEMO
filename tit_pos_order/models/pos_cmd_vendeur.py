@@ -12,6 +12,7 @@ class pos_commande(models.Model):
     commande_suivante = fields.Many2one('pos.cmd_vendeur', string = "Commande suivante", help='Ce champ permet d\'indiquer la commande suivante contenant la suite du paiement')
     partner_id = fields.Many2one('res.partner', string = "Client")
     session_id = fields.Many2one('pos.session', string = "Session")
+    vendeur_name = fields.Char(string = 'Vendeur', help="nom du vendeur quia a crée la commande")
     config_id = fields.Many2one('pos.config', related = "session_id.config_id", string = "Point de vente", store = True)
     date = fields.Datetime('Date', help = "Date de la commande", default = fields.Datetime.now())
     state = fields.Selection([('draft','Brouillon') ,('en_attente','En attente'), ('archived','Archivé'), ('done','Terminé'), ('annule','Annulé')], string = "Statut")
@@ -35,6 +36,8 @@ class pos_commande(models.Model):
         commande_coordonnee['state'] = "en_attente"
         if 'session_id' in commande:
             commande_coordonnee['session_id'] = commande['session_id']
+        if 'vendeur_name' in commande:
+            commande_coordonnee['vendeur_name'] = commande['vendeur_name']
         
         commande_id = self.create(commande_coordonnee).id
         return commande_id

@@ -6,7 +6,7 @@
            <div class="with-badge" t-att-badge="count">
                <i class="fa fa-ticket" aria-hidden="true"></i>
            </div>
-           <div>Acomptes</div>
+           <div>Commandes en attente</div>
        </div>
    </t>
 
@@ -24,7 +24,7 @@
            <div class="with-badge" t-att-badge="count">
                <i class="fa fa-ticket" aria-hidden="true"></i>
            </div>
-           <div>Commandes par vendeur</div>
+           <div>Liste des commandes</div>
        </div>
    </t>
 

@@ -23,7 +23,6 @@
     ],
     'qweb': [
             "static/src/xml/Screens/profile_page.xml",
-            "static/src/xml/Screens/profileButtons.xml",
             "static/src/xml/Screens/show_new_screen.xml",
             "static/src/xml/Screens/ValidationCommandePopup.xml",
             "static/src/xml/Screens/ValidationCommandeSucces.xml",

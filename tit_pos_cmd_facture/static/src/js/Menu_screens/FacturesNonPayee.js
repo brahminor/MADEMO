@@ -38,6 +38,15 @@ odoo.define('tit_pos_cmd_facture.FacturesNonPayee', function (require) {
               .map((checkbox) => checkbox.value);
               
         }
+        show_new_screeen(){
+            /*
+            redirection vers la page de saisie de cmd mais vide sans ajout d'une nvlle 
+            cmd dans menu cmd du natif du pos
+            */
+            var v = this.env.pos.add_new_order();
+            this.env.pos.delete_current_order();
+            this.env.pos.set_order(v);  
+        }
         async click_paiement(){
             //payer la totalité des montants dû des factures sélectionnées
             const values = Array.from(document.querySelectorAll('input[type="checkbox"]'))

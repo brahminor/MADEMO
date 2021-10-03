@@ -27,13 +27,8 @@ odoo.define('tit_pos_order.profile_page', function (require) {
                                     method: 'verification_groupe_user_modified_in_pos',
                                     args: [l.env.pos.get_cashier().user_id[0]],
                                 });
-                var contents = $('.screen-content');
-                if(result == 3 || result == 6 || result == 2){
-                    //ie comptable ou caissier ou resp de caisse
-                    contents.find(".fact_non_pay").show();// factures non payées
-                } else {
-                    contents.find(".fact_non_pay").hide();// factures non payées
-                }      
+                  
+
         }
 
         captureChange(event) {

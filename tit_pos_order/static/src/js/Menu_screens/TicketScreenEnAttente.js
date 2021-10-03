@@ -81,7 +81,7 @@ const PosComponent = require('point_of_sale.PosComponent');
                             })
                         .then(function (orders_lines){
                             self.env.pos.commandes_lines = orders_lines;
-                            l.showScreen('ProductScreen');
+                            self.showScreen('ProductScreen');
                         }); }); });
                         /// tester  actualisation de la page de cmd en attente////
         }     
@@ -178,7 +178,22 @@ const PosComponent = require('point_of_sale.PosComponent');
                 }
                 
             }
+
+            this.env.pos.delete_current_order();
+            this.env.pos.set_order(order);
+
         }
+        show_new_screeen(){
+            /*
+            redirection vers la page de saisie de cmd mais vide sans ajout d'une nvlle 
+            cmd dans menu cmd du natif du pos
+            */
+            var v = this.env.pos.add_new_order();
+            this.env.pos.delete_current_order();
+            this.env.pos.set_order(v);  
+        }
+
+        
         get_commande_by_id (id) {
             /*
             @param : id = identifiant de la commande sélectionnée

@@ -87,7 +87,7 @@ odoo.define('tit_pos_order.RewardButton2', function(require) {
                                 fields['id'] = order.attributes.client.id
                                 fields['partner_id'] = order.attributes.client.id
                                 fields['session_id'] = order.pos_session_id
-                                
+                                fields['vendeur_name'] = l.env.pos.get_cashier().name
                                 //création de la commande validée par le vendeur
                                 let commandeId = await this.rpc({
                                     model: 'pos.cmd_vendeur',
@@ -143,7 +143,7 @@ odoo.define('tit_pos_order.RewardButton2', function(require) {
                                 fields['id'] = order.attributes.client.id
                                 fields['partner_id'] = order.attributes.client.id
                                 fields['session_id'] = order.pos_session_id
-                                
+                                fields['vendeur_name'] = l.env.pos.get_cashier().name
                                 //création de la commande en attente
                                 let commandeId = await this.rpc({
                                     model: 'pos.cmd_vendeur',

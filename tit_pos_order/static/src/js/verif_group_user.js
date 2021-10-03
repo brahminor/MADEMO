@@ -25,8 +25,11 @@ odoo.define('tit_pos_order.verif_group_user', function (require) {
                         contents.find(".pay").hide();//paiement
                         $('.ticket-button').show(); // menu commandes du natif
                         $('.ticket_cmd_attente').hide();//cmd en attente
-                        $('.ticket_cmd_vendeur').show();//cmd validées par le vendeur
+                        $('.ticket_cmd_vendeur').hide();//cmd validées par le vendeur
                         
+                        var contents2 = $('.screen_profile');
+                        contents2.find(".fact_non_pay").hide();// factures non payées
+                      
                     }
                     else if (result == 2) {
                         //caissier
@@ -39,6 +42,8 @@ odoo.define('tit_pos_order.verif_group_user', function (require) {
                         $('.ticket-button').hide(); // menu commandes du natif
                         $('.ticket_cmd_attente').show();//cmd en attente
                         $('.ticket_cmd_vendeur').show();//cmd validées par le vendeur
+                        var contents2 = $('.screen_profile');
+                        contents2.find(".fact_non_pay").show();// factures non payées
                     }
                     else if (result == 3) {
                         //comptable
@@ -50,7 +55,9 @@ odoo.define('tit_pos_order.verif_group_user', function (require) {
                         contents.find(".pay").show();//paiement
                         $('.ticket-button').hide(); // menu commandes du natif
                         $('.ticket_cmd_attente').show();//cmd en attente
-                        $('.ticket_cmd_vendeur').show();//cmd validées par le vendeur 
+                        $('.ticket_cmd_vendeur').show();//cmd validées par le vendeur
+                        var contents2 = $('.screen_profile');
+                        contents2.find(".fact_non_pay").show();// factures non payées 
                     }
                     else if (result == 5) {
                         //Responsable du service de livraison
@@ -62,7 +69,9 @@ odoo.define('tit_pos_order.verif_group_user', function (require) {
                         contents.find(".pay").show();//paiement
                         $('.ticket-button').hide(); // menu commandes du natif
                         $('.ticket_cmd_attente').show();//cmd en attente
-                        $('.ticket_cmd_vendeur').show();//cmd validées par le vendeur 
+                        $('.ticket_cmd_vendeur').hide();//cmd validées par le vendeur 
+                        var contents2 = $('.screen_profile');
+                        contents2.find(".fact_non_pay").hide();// factures non payées
                     }
                     else if (result == 6) {
                         //responsable de caisse
@@ -75,6 +84,8 @@ odoo.define('tit_pos_order.verif_group_user', function (require) {
                         $('.ticket-button').hide(); // menu commandes du natif
                         $('.ticket_cmd_attente').show();//cmd en attente
                         $('.ticket_cmd_vendeur').show();//cmd validées par le vendeur
+                        var contents2 = $('.screen_profile');
+                        contents2.find(".fact_non_pay").show();// factures non payées
                     }
                     else if (result == 7) {
                         //admin du pos
@@ -88,6 +99,8 @@ odoo.define('tit_pos_order.verif_group_user', function (require) {
                         $('.ticket_cmd_attente').show();//cmd en attente
                         $('.ticket_cmd_valide').show();//cmd validées
                         $('.ticket_cmd_vendeur').show();//cmd validées par le vendeur
+                        var contents2 = $('.screen_profile');
+                        contents2.find(".fact_non_pay").hide();// factures non payées
                         
                     }
                     else if (result == 0) {
@@ -102,6 +115,8 @@ odoo.define('tit_pos_order.verif_group_user', function (require) {
                         $('.ticket_cmd_attente').hide();//cmd en attente
                         $('.ticket_cmd_valide').hide();//cmd validées
                         $('.ticket_cmd_vendeur').hide();//cmd validées par le vendeur
+                        var contents2 = $('.screen_profile');
+                        contents2.find(".fact_non_pay").hide();// factures non payées
                     }
             }
     };
