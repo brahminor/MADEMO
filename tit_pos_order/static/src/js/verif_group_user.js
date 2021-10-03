@@ -23,8 +23,10 @@ odoo.define('tit_pos_order.verif_group_user', function (require) {
                         contents.find(".ctrl_btnValiderCmd").show();//valider la commande
                         contents.find(".set-customer").show();//choisir client
                         contents.find(".pay").hide();//paiement
+                        $('.ticket-button').show(); // menu commandes du natif
                         $('.ticket_cmd_attente').hide();//cmd en attente
-
+                        $('.ticket_cmd_vendeur').show();//cmd validées par le vendeur
+                        
                     }
                     else if (result == 2) {
                         //caissier
@@ -32,9 +34,11 @@ odoo.define('tit_pos_order.verif_group_user', function (require) {
                         contents.find(".ctrl_btnRetour").hide();//retour
                         contents.find(".ctrl_btnFactNonPaye").show();//factures non payées
                         contents.find(".ctrl_btnValiderCmd").hide();//valider la commande
-                        contents.find(".set-customer").hide();//choisir client
+                        contents.find(".set-customer").show();//choisir client
                         contents.find(".pay").show();//paiement
+                        $('.ticket-button').hide(); // menu commandes du natif
                         $('.ticket_cmd_attente').show();//cmd en attente
+                        $('.ticket_cmd_vendeur').show();//cmd validées par le vendeur
                     }
                     else if (result == 3) {
                         //comptable
@@ -44,7 +48,9 @@ odoo.define('tit_pos_order.verif_group_user', function (require) {
                         contents.find(".ctrl_btnValiderCmd").hide();//valider la commande
                         contents.find(".set-customer").show();//choisir client
                         contents.find(".pay").show();//paiement
+                        $('.ticket-button').hide(); // menu commandes du natif
                         $('.ticket_cmd_attente').show();//cmd en attente
+                        $('.ticket_cmd_vendeur').show();//cmd validées par le vendeur 
                     }
                     else if (result == 5) {
                         //Responsable du service de livraison
@@ -54,7 +60,9 @@ odoo.define('tit_pos_order.verif_group_user', function (require) {
                         contents.find(".ctrl_btnValiderCmd").hide();//valider la commande
                         contents.find(".set-customer").hide();//choisir client
                         contents.find(".pay").show();//paiement
+                        $('.ticket-button').hide(); // menu commandes du natif
                         $('.ticket_cmd_attente').show();//cmd en attente
+                        $('.ticket_cmd_vendeur').show();//cmd validées par le vendeur 
                     }
                     else if (result == 6) {
                         //responsable de caisse
@@ -64,7 +72,9 @@ odoo.define('tit_pos_order.verif_group_user', function (require) {
                         contents.find(".ctrl_btnValiderCmd").hide();//valider la commande
                         contents.find(".set-customer").show();//choisir client
                         contents.find(".pay").show();//paiement
+                        $('.ticket-button').hide(); // menu commandes du natif
                         $('.ticket_cmd_attente').show();//cmd en attente
+                        $('.ticket_cmd_vendeur').show();//cmd validées par le vendeur
                     }
                     else if (result == 7) {
                         //admin du pos
@@ -74,9 +84,11 @@ odoo.define('tit_pos_order.verif_group_user', function (require) {
                         contents.find(".ctrl_btnValiderCmd").show();//valider la commande
                         contents.find(".set-customer").show();//choisir client
                         contents.find(".pay").show();//paiement
+                        $('.ticket-button').show(); // menu commandes du natif
                         $('.ticket_cmd_attente').show();//cmd en attente
                         $('.ticket_cmd_valide').show();//cmd validées
-                        $('.ticket-button').show();//cmd en cours
+                        $('.ticket_cmd_vendeur').show();//cmd validées par le vendeur
+                        
                     }
                     else if (result == 0) {
                         //ie simple utilisateur du pos
@@ -86,8 +98,10 @@ odoo.define('tit_pos_order.verif_group_user', function (require) {
                         contents.find(".ctrl_btnValiderCmd").hide();//valider la commande
                         contents.find(".set-customer").show();//choisir client
                         contents.find(".pay").show();//paiement
+                        $('.ticket-button').show(); // menu commandes du natif
                         $('.ticket_cmd_attente').hide();//cmd en attente
                         $('.ticket_cmd_valide').hide();//cmd validées
+                        $('.ticket_cmd_vendeur').hide();//cmd validées par le vendeur
                     }
             }
     };

@@ -27,45 +27,45 @@
                             </div>
 
                     </div>
-                <div class="client-select">
+                <div class="client-select" style="font-size: 24px; font-weight: bold;">
                     <div>
                         <span class="label">Référence  :</span>
-                        <input class="detail mntnt" name="montant_du" t-att-value="props.facture_selected.name || ''" readonly="1"/>
+                        <input class="detail mntnt" name="montant_du" t-att-value="props.facture_selected.name || ''" readonly="1" style="font-size: 22px; "/>
                     </div>
                     <br/>
                     <div>
                         <span class="label">date de facturation  :</span>
-                        <input class="detail mntnt" name="montant_du" t-att-value="getDate(props.facture_selected) || ''" readonly="1"/>
+                        <input class="detail mntnt" name="montant_du" t-att-value="getDate(props.facture_selected) || ''" readonly="1" style="font-size: 22px; "/>
                     </div>
                     <br/>
                     <div>
                         <span class="label">date d'échéance  :</span>
-                        <input class="detail mntnt" name="montant_du" t-att-value="getDateEcheance(props.facture_selected) || ''" readonly="1"/>
+                        <input class="detail mntnt" name="montant_du" t-att-value="getDateEcheance(props.facture_selected) || ''" readonly="1" style="font-size: 22px; "/>
                     </div>
                     <br/>
                     <div>
                         <span class="label">Etat du paiement  :</span>
-                        <input class="detail mntnt" name="montant_du" t-att-value="get_payment_state(props.facture_selected) || ''" readonly="1"/>
+                        <input class="detail mntnt" name="montant_du" t-att-value="get_payment_state(props.facture_selected) || ''" readonly="1" style="font-size: 22px; "/>
                     </div>
                     <br/>
                     <div>
                         <span class="label">Statut  :</span>
-                        <input class="detail mntnt" name="montant_du" t-att-value="get_payment_statut(props.facture_selected) || ''" readonly="1"/>
+                        <input class="detail mntnt" name="montant_du" t-att-value="get_payment_statut(props.facture_selected) || ''" readonly="1" style="font-size: 22px; "/>
                     </div>
                     <br/>
                     <div>
                         <span class="label">Total à payer  :</span>
-                        <input class="detail mntnt" name="montant_total" t-att-value="props.facture_selected.amount_total || '0'" readonly="1"/>
+                        <input class="detail mntnt" name="montant_total" t-att-value="props.facture_selected.amount_total || '0'" readonly="1" style="font-size: 22px; "/>
                     </div>
                     <br/>
                     <div>
                         <span class="label">Reste à payer  :</span>
-                        <input class="detail mntnt" name="montant_du" t-att-value="props.facture_selected.amount_residual || '0'" readonly="1"/>
+                        <input class="detail mntnt" name="montant_du" t-att-value="props.facture_selected.amount_residual || '0'" readonly="1" style="font-size: 22px; "/>
                     </div>
                     <br/>
                     <div class="edit_client_a_selectionner" style="color: blue">
                         <span class="label">Client  :</span>
-                        <select class='detail needsclick' name='client_recuperes_id' t-on-change="captureChange" style="color: blue">
+                        <select class='detail needsclick' name='client_recuperes_id' t-on-change="captureChange" style="color: blue; font-size: 22px; ">
                             <t t-foreach='env.pos.client_recuperes' t-as='client_recuperes' t-key="client_recuperes.id">
                                 <option t-att-value='client_recuperes.id'
                                     t-att-selected="props.facture_selected.partner_id ? 
@@ -75,10 +75,7 @@
                             </t>
                         </select>
                     </div>
-                    <div class="edit_client_selected">
-                        <span class="label">Client  :</span>
-                        <input class="detail client_selectionne" name="client_recuperes_id" t-att-value="get_name_client(props.facture_selected)" readonly="1"/>
-                    </div>
+                    
             </div>
         </div></div>
         </t>

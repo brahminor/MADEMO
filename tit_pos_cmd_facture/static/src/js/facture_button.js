@@ -7,7 +7,8 @@ odoo.define('tit_pos_cmd_facture.RewardButton2', function(require) {
     const {useListener } = require('web.custom_hooks');
     const Registries = require('point_of_sale.Registries');
     const PaymentScreen = require('point_of_sale.PaymentScreen');
-     
+    var rpc = require('web.rpc');
+    
     class facturesNonPayee2 extends PosComponent {
         constructor() {
            super(...arguments);
@@ -19,11 +20,21 @@ odoo.define('tit_pos_cmd_facture.RewardButton2', function(require) {
            return order
         }
 
-        async onClick() {
-            this.showScreen('FacturesNonPayee');
-            
-            
-       }
+        async onClick() {       
+           this.reload_cmd_en_attente();
+        }
+
+        reload_cmd_en_attente(){
+            var self = this;
+            rpc.query({
+                model: 'account.move',
+                method: 'search_read',
+                args: [[['payment_state','in',['not_paid','partial']],['move_type','in',['out_invoice','out_refund']],['state','!=','cancel'],['invoice_date_due', '<=',new Date()]], []],
+            }).then(function (factures_non_payees){
+                self.env.pos.factures_non_payees = factures_non_payees;
+                self.showScreen('FacturesNonPayee');
+            });
+        }                    
    }
     facturesNonPayee2.template = 'facturesNonPayee2';
     ProductScreen.addControlButton({

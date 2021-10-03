@@ -7,9 +7,8 @@
                 <div class="controls">
 
                     <div class="buttons">
-                        <button class="button back" t-on-click="showScreen('ProductScreen')">
-                            <i class="fa fa-angle-double-left fa-fw"></i>
-                            <span class="back_text">Back</span>
+                        <button class="button back" t-on-click="showScreen('profile_page')">
+                            <span class="back_text">Fermer</span>
                         </button>
 
                         <button class="button paiement" style="right:100%; background-color: #32CD32;"  t-on-click="click_paiement()">
