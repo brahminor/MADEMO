@@ -21,6 +21,7 @@
         'views/pos_commande_view.xml',
         'views/pos_cmd_vendeur_view.xml',
     ],
+    'css': ['/static/src/css/cashier_screen.css'],
     'qweb': [
             "static/src/xml/Screens/profile_page.xml",
             "static/src/xml/Screens/show_new_screen.xml",

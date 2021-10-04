@@ -177,7 +177,7 @@ odoo.define('tit_pos_order.PaymentScreenButton', function(require) {
                                     args: [[['payment_state','in',['not_paid','partial']],['move_type','in',['out_invoice','out_refund']],['state','!=','cancel'],['invoice_date_due', '<=',new Date()]], []],
                                 }).then(function (factures_non_payees){
                                     self.env.pos.factures_non_payees = factures_non_payees;
-                                    l2.reload_cmd_en_attente(commande_ancienne);
+                                    self.reload_cmd_en_attente(commande_ancienne);
                                 });
                             })
                         }
@@ -212,8 +212,10 @@ odoo.define('tit_pos_order.PaymentScreenButton', function(require) {
                             })
                                 .then(function (factures_non_payees){
                                     self.env.pos.factures_non_payees = factures_non_payees;
+                                    self.reload_cmd_en_attente(commande_ancienne);
                                 });
                             })
+                        this.reload_cmd_en_attente(commande_ancienne);
                     } 
                 } catch (error) {
                     if (error.message.code < 0) {
@@ -368,6 +370,7 @@ odoo.define('tit_pos_order.PaymentScreenButton', function(require) {
                 }  }   } 
 
                 reload_cmd_en_attente(commande_ancienne){
+                    
                         /*
                         cette fonction permet d'actualiser la page des acomptes
                         et faire appel à la fct d'actualisation de la page des cmd
@@ -375,6 +378,14 @@ odoo.define('tit_pos_order.PaymentScreenButton', function(require) {
                         @param: commande_ancienne : id de la commande qu'elle était coura,te
                         */
                         var self = this; 
+                        rpc.query({
+                            model: 'pos.cmd_vendeur',
+                            method: 'delete_ancienne_cmd',
+                            args: [{
+                            'commande_ancienne': commande_ancienne, 
+                                                }]
+                           }).then(function(u){
+                           
                         rpc.query({
                             model: 'pos.commande',
                             method: 'search_read',
@@ -395,17 +406,8 @@ odoo.define('tit_pos_order.PaymentScreenButton', function(require) {
                             })
                         .then(function (orders_lines){
                             self.env.pos.commandes_lines = orders_lines;
-                            rpc.query({
-                                            model: 'pos.cmd_vendeur',
-                                            method: 'delete_ancienne_cmd',
-                                            args: [{
-                                                'commande_ancienne': commande_ancienne, 
-                                                }]
-                                            }).then(function(u){
-                                                self.reload_cmd_vendeur();
-                                           })
-                                            self.reload_cmd_vendeur();
-                        }); }); });
+                            self.reload_cmd_vendeur(); 
+                        }); }); });});
                         /// tester  actualisation de la page de cmd en attente////
         } 
 
