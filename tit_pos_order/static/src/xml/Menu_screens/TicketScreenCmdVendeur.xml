@@ -44,7 +44,7 @@
 
                             <div class="col start wide">
                                 <button class='button button_suite_cmd' style="right:100%; background-color: #32CD32;"  title="Rembourser" t-on-click="selectOrder(cmd, cmd.id)">
-                                   Encaissier
+                                   Encaisser
                                 </button>
                             </div>
                             <div class="col start wide">
