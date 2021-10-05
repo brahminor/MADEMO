@@ -115,6 +115,7 @@ class res_partner(models.Model):
         et montant à payer par ce dernier)
 
         """
+        
         montant_avoir_positif = 0
         for i in payment_lignes:
             meth_pay = self.env['pos.payment.method'].browse(i.get('id_meth'))
@@ -124,10 +125,12 @@ class res_partner(models.Model):
         if montant_avoir_positif != 0:
             # ie il existe des lignes de paiements tel que la méthode de paiement est avoir
             client_associe = self.env['res.partner'].browse(client_choisi)
-            if client_associe and client_associe[0].avoir_client < montant_avoir_positif:
+            if client_associe and client_associe[0].avoir_client <= 0:
+                return 0
+            elif client_associe and client_associe[0].avoir_client < montant_avoir_positif:
                 # ie l'avoir est < au montant à payer depuis l'avoir possible du client
                 return client_associe[0].avoir_client
-        return 0
+        return -1
     @api.model
     def avoir_du_client(self, client_choisi):
         """

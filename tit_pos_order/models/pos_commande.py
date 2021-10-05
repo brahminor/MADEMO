@@ -99,6 +99,32 @@ class pos_commande(models.Model):
             i.state = 'done'
 
     @api.model
+    def update_avoir_client(self, commande_id, client_choisi, payment_lignes):
+        """cette partie est pour remplir l'avoir du client dans le cas ou 
+        la methode de paiement est un avoir et mettre la commande en attente en état terminé
+        @param:
+        - commande_id: la commande en attente reprisse(ancienne)
+        - client_choisi: l'id du client choisi depuis le pos
+        - payment_lignes: la liste des lignes de paiements , chaque élement contient id du
+        moyen de paiement et le montant à payer avec ce dernier
+        """
+        montant_avoir_negatif = 0 #montant à jouter comme avoir au client
+        montant_avoir_positif = 0 #montant à débiter depuis l'avoir du client
+        for i in payment_lignes:
+            meth_pay = self.env['pos.payment.method'].browse(i.get('id_meth'))
+            if meth_pay:
+                if meth_pay[0].methode_avoir and i.get('montant') < 0:
+                    montant_avoir_negatif += (i.get('montant')) * (-1)
+                elif meth_pay[0].methode_avoir and i.get('montant') > 0:
+                    montant_avoir_positif += i.get('montant')
+
+        client_associe = self.env['res.partner'].browse(client_choisi)
+        if montant_avoir_negatif != 0 and client_associe: 
+            client_associe[0].avoir_client = client_associe[0].avoir_client + montant_avoir_negatif
+        if montant_avoir_positif!= 0 and client_associe: 
+            client_associe[0].avoir_client = client_associe[0].avoir_client - montant_avoir_positif
+    
+    @api.model
     def annuler_acompte(self, cmd):
         #cette fonction permet d'annuler l'acompte 
         if 'id_commande' in cmd:
