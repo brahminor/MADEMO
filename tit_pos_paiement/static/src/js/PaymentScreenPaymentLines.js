@@ -48,11 +48,9 @@ odoo.define('tit_pos_paiement.PaymentScreenPaymentLines', function (require) {
                       }
                       for (var i = 0; i < lines.length; i++) {
                         
-                        if (lines[i].cid === cid.detail.cid) {
                             lines[i].set_check_number(check_number);
                             lines[i].set_check_date(check_date);
-                            return;
-                        }
+                            
                       }
 
                    }
@@ -87,10 +85,8 @@ odoo.define('tit_pos_paiement.PaymentScreenPaymentLines', function (require) {
                       }
                       
                       for (var i = 0; i < lines.length; i++) {
-                        if (lines[i].cid === cid.detail.cid) {
-                            lines[i].set_check_number(check_number);
-                            return;
-                        }
+                        lines[i].set_check_number(check_number);
+                            
                       }
 
                    }
@@ -125,10 +121,8 @@ odoo.define('tit_pos_paiement.PaymentScreenPaymentLines', function (require) {
                       }
                       for (var i = 0; i < lines.length; i++) {
                         
-                        if (lines[i].cid === cid.detail.cid) {
-                            lines[i].set_check_date(check_date);
-                            return;
-                        }
+                        lines[i].set_check_date(check_date);
+                            
                       }
                    }
                
