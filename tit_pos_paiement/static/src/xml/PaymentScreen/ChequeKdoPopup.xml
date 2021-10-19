@@ -11,7 +11,7 @@
                     <br/>
                     <label class="check_label">Date remise:</label>
                      <br/>
-                    <input  type="date" t-model="state.inputValue" t-ref="input"></input>
+                    <input  type="date" t-model="state.inputValue" t-ref="input" style="margin-top: 10px;"></input>
                  
                </span>
                <div class="footer">

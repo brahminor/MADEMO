@@ -10,7 +10,7 @@ odoo.define('tit_pos.models', function (require) {
     },
  });
 
-    models.load_fields('pos.payment.method',['deferred_check','check','check_kdo','cash_journal_bank_id']);
+    models.load_fields('pos.payment.method',['type_cheque','cash_journal_bank_id']);
 
 var SuperPaymentline = models.Paymentline;
 models.Paymentline = models.Paymentline.extend({

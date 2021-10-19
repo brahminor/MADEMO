@@ -22,7 +22,8 @@ odoo.define('tit_pos_paiement.ChequeNormPopup', function(require) {
             this.inputRef.el.focus();
         }
         getPayload() {
-            return this.state.inputValue;
+        //charge du state lorsque le popup est confirmé.
+        return this.state.inputValue;
         }
     }
     ChequeNormPopup.template = 'ChequeNormPopup';

@@ -7,9 +7,7 @@
         <field name="inherit_id" ref="point_of_sale.pos_payment_method_view_form"/>
         <field name="arch" type="xml">
             <xpath expr="//field[@name='cash_journal_id']" position="after">
-               <field name="deferred_check"/>
-               <field name="check"/>
-               <field name="check_kdo"/>
+               <field name="type_cheque"/>
                <field name="methode_avoir"/>
             </xpath>
         </field>

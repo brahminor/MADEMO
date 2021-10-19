@@ -15,10 +15,10 @@ odoo.define('tit_pos_paiement.PaymentScreenPaymentLines', function (require) {
             useListener('edit-cheque', this.click_edit_cheque_paymentline); 
             useListener('edit-cheque_normal', this.click_edit_cheque_paymentline_normal); 
             useListener('edit-cheque_kdo', this.click_edit_cheque_paymentline_kdo); 
-
             }
 
             async click_edit_cheque_paymentline(cid) {
+                //Afficher le pop up du chèque différé
                 var self = this;
                 var lines = this.env.pos.get_order().get_paymentlines();
                 var check_number = false;
@@ -29,9 +29,8 @@ odoo.define('tit_pos_paiement.PaymentScreenPaymentLines', function (require) {
                        title: this.env._t('Chéque différé'),
                        body: this.env._t('This click is successfully done.'),
                    });
-                   if (confirmed) {
-                    
-                    // var output= payload.split(' ');
+                   if (confirmed) 
+                   {
                     check_number  = payload[0];
                     check_date = payload[1];
                      if (check_number &&  check_date)
@@ -46,24 +45,19 @@ odoo.define('tit_pos_paiement.PaymentScreenPaymentLines', function (require) {
                               body: this.env._t('Numéro de chéque / date est obligatoire.'),
                           });
                       }
-                      for (var i = 0; i < lines.length; i++) {
-                        
-                            lines[i].set_check_number(check_number);
-                            lines[i].set_check_date(check_date);
-                            
-                      }
-
+                      this.env.pos.get_order().selected_paymentline.check_number = check_number;
+                      this.env.pos.get_order().selected_paymentline.check_date = check_date;
                    }
                
                 this.render();
             }
              async click_edit_cheque_paymentline_normal(cid) {
+                //Afficher le pop up du chèque
                 var self = this;
                 var valid_check=false;
                 var check_number = false;
                 var deffered_check = false;
                 var lines = this.env.pos.get_order().get_paymentlines();
-                
                 const { confirmed, payload } = await this.showPopup('ChequeNormPopup', {
                        title: this.env._t('Chéque'),
                        body: this.env._t('This click is successfully done.'),
@@ -71,7 +65,6 @@ odoo.define('tit_pos_paiement.PaymentScreenPaymentLines', function (require) {
                    if (confirmed) {
 
                     check_number=payload;
-
                     if (check_number != 0)
                     {
                         valid_check = true;
@@ -83,23 +76,17 @@ odoo.define('tit_pos_paiement.PaymentScreenPaymentLines', function (require) {
                               body: this.env._t('Numéro de chéque est obligatoire.'),
                           });
                       }
-                      
-                      for (var i = 0; i < lines.length; i++) {
-                        lines[i].set_check_number(check_number);
-                            
-                      }
-
+                    this.env.pos.get_order().selected_paymentline.check_number = check_number;
                    }
-                
+                    
                 this.render();
             }
              async click_edit_cheque_paymentline_kdo(cid) {
+                //Afficher le pop up du chèque KDO
                 var self = this;
                 var valid_check=false;
                 var lines = this.env.pos.get_order().get_paymentlines();
-      
                 var deffered_check = false;
-                
                 const { confirmed, payload } = await this.showPopup('ChequeKdoPopup', {
                        title: this.env._t('Chéque KDO'),
                        body: this.env._t('This click is successfully done.'),
@@ -119,16 +106,10 @@ odoo.define('tit_pos_paiement.PaymentScreenPaymentLines', function (require) {
                               body: this.env._t('La date du chéque est obligatoire.'),
                           });
                       }
-                      for (var i = 0; i < lines.length; i++) {
-                        
-                        lines[i].set_check_date(check_date);
-                            
-                      }
+                      this.env.pos.get_order().selected_paymentline.check_date = check_date;
                    }
-               
                 this.render();
             }
-            
         };
 
     Registries.Component.extend(PaymentScreenPaymentLines, Pos_P_PaymentLines);

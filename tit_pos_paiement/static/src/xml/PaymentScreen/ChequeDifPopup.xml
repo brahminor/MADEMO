@@ -11,13 +11,13 @@
                    <!-- Adding text field-->
                    <label class="check_label">N° de chéque : </label>
                     <br/>
-                   <input  type="text" t-model="state.inputValue_1" t-ref="input"></input>
+                   <input  type="text" t-model="state.inputValue_1" t-ref="input" style="margin-top: 10px;"></input>
 
                     <br/>
                      <!-- Adding date field-->
                     <label class="check_label">Date remise:</label>
                      <br/>
-                     <input  type="date" t-model="state.inputValue_2" t-ref="input"></input>
+                     <input  type="date" t-model="state.inputValue_2" t-ref="input" style="margin-top: 10px;"></input>
                      <!-- Adding selection field-->
                    
                </span>
