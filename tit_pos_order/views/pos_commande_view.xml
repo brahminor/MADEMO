@@ -42,6 +42,7 @@
                                 <group class="oe_subtotal_footer oe_right" colspan="2">
                                     <field name="amount_total" widget="monetary"/>
                                      <field name="acompte" widget="monetary"/>
+                                     <field name="montant_du" widget="monetary"/>
                                 </group>
                                 <div class="oe_clear"/>
                             </page>
@@ -72,7 +73,9 @@
                     <field name="partner_id"/>
                     <field name="date"/>
                     <field name="session_id"/>
-                    <field name="acompte"/>
+                    <field name="amount_total" widget="monetary"/>
+                    <field name="acompte" widget="monetary"/>
+                    <field name="montant_du" widget="monetary"/>
                     <field name="state"/>
                 </tree>
             </field>

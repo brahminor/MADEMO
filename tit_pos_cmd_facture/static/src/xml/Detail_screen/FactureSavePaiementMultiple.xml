@@ -30,12 +30,17 @@
 
 
                     <div>
-                        <span class="label">Montant total  :</span>
+                        <span class="label">Montant dû  :</span>
                         <input class="detail mntnt" name="montant_total" t-att-value="props.montant_total_du" readonly="1" style="font-size: 22px;"/>
                     </div> 
                     <br/>
+                    <div>
+                        <span class="label">Montant à régler  :</span>
+                        <input class="detail mntnt" name="montant_saisi" t-att-value="props.montant_total_du"  t-on-change="captureChange" style="font-size: 22px;    "/>
+                    </div>
+                    <br/>
                     <div class="client-detail amount-input">
-                        <span class="label lb-journal-inv">Journal</span>
+                        <span class="label lb-journal-inv">Mode de règlement</span>
                           <select class='detail needsclick journal-inv-payment' name='facture_recuperes_id' t-on-change="captureChange" style="font-size: 22px;">
                                 <option value=''>None</option>
                                 <t t-foreach='env.pos.journals_recuperes' t-as='journal'>

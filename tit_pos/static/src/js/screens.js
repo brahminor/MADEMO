@@ -7,10 +7,58 @@ odoo.define('tit_pos.screens', function(require) {
     var models = require('point_of_sale.models');
     const { useState } = owl.hooks;
     var rpc = require('web.rpc');
-    
-    models.load_fields('res.partner',[ 'property_account_position_id', 'company_type', 'child_ids', 'type', 'website', 'siren_company', 'nic_company','credit_limit', 'avoir_client']);
+        models.load_fields('res.partner',[ 'property_account_position_id', 'company_type', 'child_ids', 'type', 'website', 'siren_company', 'nic_company','credit_limit', 'avoir_client']);
+    var _super_pos_model = models.PosModel.prototype;
+    var _models = models.PosModel.prototype.models;
 
-    const POSSaveClientOverride = ClientDetailsEdit =>
+    var _domain = [['customer_rank', '!=', 0]];
+    // partner model is the fifth element in models (index==4)
+    _models[4]['domain']  = function(self){ return _domain; };
+
+    models.PosModel = models.PosModel.extend({
+        /* reload the list of partner, returns as a promise that resolves if there were
+         updated partners, and fails if not*/
+        load_new_partners: function(){
+            /* overriding the existing function to associate it into the new unction
+            wich return the the domaine existing in native function with the name 
+            'prepare_new_partners_domain'
+            */
+            var self = this;
+            return new Promise(function (resolve, reject) {
+                var fields = _.find(self.models, function(model){ return model.label === 'load_partners'; }).fields;
+                var domain = self.prepare_new_partners_domain_all_contact();
+                self.rpc({
+                    model: 'res.partner',
+                    method: 'search_read',
+                    args: [domain, fields],
+                }, {
+                    timeout: 3000,
+                    shadow: true,
+                })
+                .then(function (partners) {
+                    if (self.db.add_partners(partners)) {   // check if the partners we got were real updates
+                        resolve();
+                    } else {        
+                        reject('Failed in updating partners.');
+                    }
+                }, function (type, err) { reject(); });
+            });
+        },
+
+        prepare_new_partners_domain: function(){
+            // overriding the existing function to change the domain of contact displaied
+            var domain = _super_pos_model.prepare_new_partners_domain.apply(this, arguments);
+            domain.push(..._domain);
+            return domain;
+        },
+        prepare_new_partners_domain_all_contact: function(){
+            /*this function return the domain to be used in chargement of custumer after 
+            edditing once or creation a new one*/
+            return [['write_date','>', this.db.get_partner_write_date()]];
+        },
+    });
+
+const POSSaveClientOverride = ClientDetailsEdit =>
         class extends ClientDetailsEdit {
             constructor() {
             super(...arguments);
@@ -55,11 +103,8 @@ odoo.define('tit_pos.screens', function(require) {
             */
             async saveChanges(event) {
             try {
-
                 let processedChanges = {};
-                
-                if (this.contact_associe){
-                    
+                if (this.contact_associe){    
                     processedChanges['contact_id'] = this.contact_associe.id
                 }
                 else{
@@ -130,6 +175,7 @@ odoo.define('tit_pos.screens', function(require) {
                      processedChanges['contact_name']='';
                  }
                 processedChanges.id = this.props.partner.id || false;
+                processedChanges['customer_rank'] = 1
                 
                 this.trigger('save-changes', { processedChanges });
                 

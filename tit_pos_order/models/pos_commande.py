@@ -22,10 +22,17 @@ class pos_commande(models.Model):
     amount_total = fields.Monetary('Total TTC', compute = "get_amount_total", store = True)
     currency_id = fields.Many2one('res.currency', string = "Devise", default = lambda self: self.env.user.company_id.currency_id)
     acompte = fields.Monetary('Acompte')
+    montant_du = fields.Monetary('Montant dû', compute='_get_montant', help='Ce champ contient le montant dû reste à payer ')
     payment_ids = fields.One2many('pos.payment_cmd', 'pos_commande_id', string='Paiements')
 
     def unlink(self):
         raise ValidationError(_('Attention! \n Vous ne pouvez pas supprimer les acomptes déjà validés'))
+
+    @api.depends('acompte','amount_total')
+    def _get_montant(self):
+        #cette fonction permet de calculer le montant dû à partir du ttc et l'acompte
+        for record in self:
+            record.montant_du = record.amount_total - record.acompte 
 
     @api.depends('order_line.price_subtotal')
     def get_amount_total(self):

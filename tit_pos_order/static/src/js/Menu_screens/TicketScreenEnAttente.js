@@ -81,7 +81,9 @@ const PosComponent = require('point_of_sale.PosComponent');
                             })
                         .then(function (orders_lines){
                             self.env.pos.commandes_lines = orders_lines;
-                            self.showScreen('ProductScreen');
+                            var v = self.env.pos.add_new_order();
+                            self.env.pos.delete_current_order();
+                            self.showScreen('TicketScreenEnAttente');
                         }); }); });
                         /// tester  actualisation de la page de cmd en attente////
         }     

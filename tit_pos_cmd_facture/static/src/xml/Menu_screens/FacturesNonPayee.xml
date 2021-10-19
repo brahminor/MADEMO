@@ -82,10 +82,10 @@
                             <!-- fin de  colorer la colonne selon état du paiement de la facture -->
 
                             <div class="col start wide">
-                                 <t t-esc="cmd.amount_total"/>
+                                 <t t-esc="cmd.amount_total.toFixed(2)"/>
                             </div>
                             <div class="col start wide">
-                                 <t t-esc="cmd.amount_residual"/>
+                                 <t t-esc="cmd.amount_residual.toFixed(2)"/>
                             </div> 
                             <div class="col start wide">
                                 <button class='button button_details'  style="right:100%; background-color: #00BFFF;" title="details" t-on-click="selectFacture_for_details(cmd)">

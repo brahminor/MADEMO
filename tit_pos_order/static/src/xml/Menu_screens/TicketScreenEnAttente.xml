@@ -21,7 +21,9 @@
                     <div class="header-row">
                         <div class="col start wide">Date</div>
                         <div class="col start wide">Client</div>
+                        <div class="col start wide">Total TTC</div>
                         <div class="col start wide">Acompte</div>
+                        <div class="col start wide">Montant dû</div>
                         <div class="col start wide">Session</div> 
                         <div class="col start wide">#</div> 
                         <div class="col start wide">#</div> 
@@ -35,9 +37,14 @@
                                  <t t-esc="cmd.partner_id[1]"/>
                             </div>
                             <div class="col start wide">
-                                 <t t-esc="cmd.acompte"/>
+                                 <t t-esc="cmd.amount_total.toFixed(2)"/>
                             </div>
-                            
+                            <div class="col start wide">
+                                 <t t-esc="cmd.acompte.toFixed(2)"/>
+                            </div>
+                            <div class="col start wide">
+                                 <t t-esc="cmd.montant_du.toFixed(2)"/>
+                            </div>
                             <div class="col start wide">
                                  <t t-esc="cmd.session_id[1]"/>
                             </div>

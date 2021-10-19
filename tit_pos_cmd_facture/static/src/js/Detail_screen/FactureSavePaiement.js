@@ -46,7 +46,7 @@ odoo.define('tit_pos_cmd_facture.FactureSavePaiement', function (require) {
             @param: 
                 -factures_non_payees: facture selectionnée en cours
             */
-            return factures_non_payees.avoir_client;
+            return factures_non_payees.avoir_client.toFixed(2);
              
         }
 

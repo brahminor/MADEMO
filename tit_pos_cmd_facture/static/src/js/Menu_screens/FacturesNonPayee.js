@@ -55,7 +55,14 @@ odoo.define('tit_pos_cmd_facture.FacturesNonPayee', function (require) {
               
                 var self = this;
                 let result = 0
-                rpc.query({
+                if(values.length <= 0){
+                    self.showPopup('ErrorPopup', {
+                        title:('Paiement impossible'),
+                        body:('Veuillez sélectionner au moins une facture !')
+                    });
+                }
+                else{
+                    rpc.query({
                         model: 'account.move',
                         method: 'get_amount_total',
                         args: [values],
@@ -72,11 +79,12 @@ odoo.define('tit_pos_cmd_facture.FacturesNonPayee', function (require) {
                                 method: 'get_client_et_avoir',
                                 args: [values],
                             }).then(function (res){
-                                self.showScreen('FactureSavePaiementMultiple', { facturess_selected: values, montant_total_du: montant_total, client_name:res.client_name, avoir_client: res.avoir_client});
+                                self.showScreen('FactureSavePaiementMultiple', { facturess_selected: values, montant_total_du: montant_total.toFixed(2), client_name:res.client_name, avoir_client: res.avoir_client.toFixed(2)});
                             });
                                 } 
                         
                     });
+                }
         }
 
         back() { 
