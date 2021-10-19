@@ -32,6 +32,7 @@ odoo.define('tit_pos.LoginScreen', function(require) {
 	            if (employee) {
 	                this.env.pos.set_cashier(employee);
 	                this.back();
+	                this.showScreen('profile_page');
 	                verif_groupe()//verifier groupe de l'utilisateur connecté sur le pos
 	            }
 	        }

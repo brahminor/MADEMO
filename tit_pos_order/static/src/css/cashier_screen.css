@@ -16,3 +16,34 @@
     cursor: not-allowed !important;
 }
 
+
+.ticket-button {
+    background-color: #00BFFF;
+    color:#000000;
+
+    display: flex;
+    align-items: center;
+    padding: 0 15px;
+    font-size: medium;
+}
+
+.ticket_cmd_attente {
+    background-color: #00BFFF;
+    color:#000000;
+
+    display: flex;
+    align-items: center;
+    padding: 0 15px;
+    font-size: medium;
+}
+
+.ticket_cmd_vendeur {
+    background-color: #00BFFF;
+    color:#000000;
+
+    display: flex;
+    align-items: center;
+    padding: 0 15px;
+    font-size: medium;
+}
+

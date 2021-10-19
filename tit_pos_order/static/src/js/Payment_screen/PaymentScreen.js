@@ -30,11 +30,17 @@ odoo.define('tit_pos_order.PaymentScreenButton', function(require) {
                                     method: 'verification_groupe_user_modified_in_pos',
                                     args: [l.env.pos.get_cashier().user_id[0]],
                                 });
-                if(result != 3){
-                    //emecher de voir la case de debloquage pour user different que comptable
-                    var contents = $('.screen-content');
+                var contents = $('.screen-content');
+                if(result != 6){
+                    //emecher de voir la case de debloquage pour user different que res de caisse
                     contents.find(".debloquer_client").hide();   //débloquer client
-                }
+                } 
+                contents.find(".customer-button").hide();   //change client
+                if(result == 7 || result == 0){
+                    //emecher de voir la case de debloquage pour user different que comptable
+                    contents.find(".debloquer_client").show();   //débloquer client
+                    contents.find(".customer-button").show();   //change client
+                }      
         }
 
         async render_paymentlines () {
@@ -49,59 +55,61 @@ odoo.define('tit_pos_order.PaymentScreenButton', function(require) {
                         method: 'avoir_du_client',
                         args: [this.env.pos.get_order().get_client().id]
                     }).then(function(result_fct){
-                        if (result_fct > 0){
-                            $('.js_customer_name').text( client ? client.name + '\n' +'(' + result_fct + ')' : _t('Customer') );
-                        }
-                        else{
-                            $('.js_customer_name').text( client ? client.name : _t('Customer') );
-               
-                        }
+                        $('.avoir_btn').text( result_fct.toFixed(2) );
+                        $('.button_client_name').text(client.name) ;
                     });
          }  
-    }
-
+        }
         async validateOrder(isForceValidate) {
-
-            var ligne_payements = this.env.pos.get_order().get_paymentlines()
-            var payment_lignes = []
-                    /* 
-                        voir si le montant est positif ou négative psq dans le cas de 
-                        negative donc c un avoir et ne va pas afficher le msg de la limite
-                        de crédit (psq le client entrain de faire un retour)
-                    */
-                    var montant_totale_trouve = 0
-                    var ligne_payements_effectuees = this.env.pos.get_order().get_paymentlines()
-                    for(var i =0; i<ligne_payements_effectuees.length;i++){
-                        montant_totale_trouve += ligne_payements_effectuees[i].amount
- 
-                        payment_lignes.push({
-                            'id_meth': ligne_payements_effectuees[i].payment_method.id,
-                            'montant': ligne_payements_effectuees[i].amount
-                        })
-                    }
-                    var self2 = this
-                    var avoir_atteind =0;
-                    rpc.query({
-                        model: 'res.partner',
-                        method: 'avoir_depasse_ou_pas',
-                        args: [this.env.pos.get_order().get_client().id, payment_lignes]
-                    }).then(function(result_fct){
-                        if (result_fct > 0){
-                            avoir_atteind = 1;
-                            self2.showPopup('ErrorPopup', {
-                                title:('L\'avoir est insuffisant'),
-                                body:('Vous avez que  '+result_fct+ ' comme avoir')
-                            });
-                        }
-                        else{
-                            avoir_atteind = 0;
-                            self2.validate_order_p(isForceValidate)
-                        }
-                    });
+            // cette fonction permet de faire l'appel à la fonction qui fait la validation de la commande sur le pos
+            this.validate_order_p(isForceValidate)
         }
         async validate_order_p(isForceValidate){
+            //cette fonction permet de valider la commande sur le pos 
+            var commande_ancienne = this.env.pos.get_order()
             var ligne_payements = this.env.pos.get_order().get_paymentlines()
             var l2 =this;
+
+            for (var i = 0; i < ligne_payements.length; i++) {
+                if (ligne_payements[i].payment_method['type_cheque'] === 'check' && (ligne_payements[i].check_number === undefined || ligne_payements[i].check_number === ''))
+                 {
+                     this.showPopup('ErrorPopup', {
+                        title:('Le numéro de chèque est requis'),
+                        body:('Veuillez renseigner le numéro de chèque s.v.p.')
+                    });
+
+                return false;
+                }
+                else if (ligne_payements[i].payment_method['type_cheque'] === 'deferred_check')
+                {
+                    if(ligne_payements[i].check_number === undefined || ligne_payements[i].check_number === '') 
+                    {
+                        this.showPopup('ErrorPopup', {
+                            title:('Les données du chèque différé sont requises'),
+                            body:('Veuillez renseigner le numéro de chèque s.v.p.')
+                          });
+
+                        return false;
+                    }   
+                    else if (ligne_payements[i].check_date === undefined || ligne_payements[i].check_date === '')
+                    {
+                        this.showPopup('ErrorPopup', {
+                            title:('Les données du chèque différé sont requises'),
+                            body:('Veuillez renseigner la date du remise s.v.p.')
+                          });
+
+                    return false;
+                    } 
+                }
+                else if (ligne_payements[i].payment_method['type_cheque'] === 'check_kdo'  && (ligne_payements[i].check_date === undefined || ligne_payements[i].check_date === ''))
+                {
+                     this.showPopup('ErrorPopup', {
+                        title:('La date du chèque kdo est requise'),
+                        body:('Veuillez renseigner la date du remise s.v.p.')
+                    });
+                return false;
+                } 
+            }
             if(this.env.pos.config.cash_rounding) {
                 if(!this.env.pos.get_order().check_paymentlines_rounding()) {
                     this.showPopup('ErrorPopup', {
@@ -145,7 +153,7 @@ odoo.define('tit_pos_order.PaymentScreenButton', function(require) {
                             'montant': ligne_payements_effectuees[i].amount
                         })
                     }
-                    if(limite_atteind > 0 && montant_totale_trouve > 0){
+                    if(limite_atteind > 0 && montant_totale_trouve > 0 ){
                         /*
                             faire le traitement de vérification de la limite si elle est
                          éteint dans le cas ou le montant est positive.
@@ -166,16 +174,25 @@ odoo.define('tit_pos_order.PaymentScreenButton', function(require) {
                             rpc.query({
                                 model: 'pos.commande',
                                 method: 'update_state_done',
-                                args: [commande_ancienne, self.env.pos.get_order().get_client().id, payment_lignes]
+                                args: [commande_ancienne, self.env.pos.get_order().get_client().id, []]
                             }).then(function(u){
-                                l2.reload_cmd_en_attente(); 
+                                 
                                 rpc.query({
                                     model: 'account.move',
                                     method: 'search_read',
-                                    args: [[['payment_state','in',['not_paid','partial']],['move_type','in',['out_invoice','out_refund']],['state','!=','cancel'],['invoice_date_due', '<=',new Date()]], []],
+                                    args: [[['payment_state','in',['not_paid','partial']],['move_type','in',['out_invoice']],['state','!=','cancel'],['invoice_date_due', '<=',new Date()]], []],
                                 }).then(function (factures_non_payees){
                                     self.env.pos.factures_non_payees = factures_non_payees;
-                                });
+                                    rpc.query({
+                                        model: 'res.partner',
+                                        method: 'search_read',
+                                        args: [[], [ 'property_account_position_id', 'company_type', 'child_ids', 'type', 'website', 'siren_company', 'nic_company','credit_limit', 'avoir_client']],
+                                    
+                                    }).then(function (partner_result){
+                                        self.env.pos.partner = partner_result;
+                                        self.reload_cmd_en_attente(commande_ancienne);
+                                    });
+                                    });
                             })
                         }
                         else {
@@ -205,12 +222,23 @@ odoo.define('tit_pos_order.PaymentScreenButton', function(require) {
                             rpc.query({
                                 model: 'account.move',
                                 method: 'search_read',
-                                args: [[['payment_state','in',['not_paid','partial']],['move_type','in',['out_invoice','out_refund']],['state','!=','cancel'],['invoice_date_due', '<=',new Date()]], []],
+                                args: [[['payment_state','in',['not_paid','partial']],['move_type','in',['out_invoice']],['state','!=','cancel'],['invoice_date_due', '<=',new Date()]], []],
                             })
                                 .then(function (factures_non_payees){
                                     self.env.pos.factures_non_payees = factures_non_payees;
+                                    rpc.query({
+                                        model: 'res.partner',
+                                        method: 'search_read',
+                                        args: [[], [ 'property_account_position_id', 'company_type', 'child_ids', 'type', 'website', 'siren_company', 'nic_company','credit_limit', 'avoir_client']],
+                                    
+                                    }).then(function (partner_result){
+                                        self.env.pos.partner = partner_result;
+                                        self.reload_cmd_en_attente(commande_ancienne);
+                                    });
+                                    
                                 });
                             })
+                        this.reload_cmd_en_attente(commande_ancienne);
                     } 
                 } catch (error) {
                     if (error.message.code < 0) {
@@ -223,29 +251,30 @@ odoo.define('tit_pos_order.PaymentScreenButton', function(require) {
                     }
                 } } }
         }
-        async IsCustomButton() {
+        async validate_cmd_acompte(){
+
+            var commande_ancienne = this.env.pos.get_order();
            /*
            Fonction pour créer la commande en attente
            */
+
+           var self2 = this
+            var avoir_atteind_limite_ou_p =0;
+
            var l =this;
             const order = this.env.pos.get_order();
             var commande_ancienne = order.commande_id
-            if (order.attributes.client == null){
-                return this.showPopup('ErrorPopup', {
-                    title:('Le choix du client est requis'),
-                    body:('Veuillez définir le client s.v.p ! ')
-                });
+
+            var payment_lignes = []
+            var ligne_payements_effectuees = this.env.pos.get_order().get_paymentlines()
+            for(var i =0; i<ligne_payements_effectuees.length;i++){
+                payment_lignes.push({
+                    'id_meth': ligne_payements_effectuees[i].payment_method.id,
+                    'montant': ligne_payements_effectuees[i].amount
+                })
             }
-            else{
-                    if (order.selected_paymentline === undefined){
-                        return this.showPopup('ErrorPopup', {
-                            title:('Le choix de la méthode de paiement est requis'),
-                            body:('Veuillez définir la méthode de paiement s.v.p ! ')
-                        });
-                    }
-                    else
-                    {
-                    //traitement associé à la confirmation de l'alerte de dépassement de la limite
+
+                //traitement associé à la confirmation de l'alerte de dépassement de la limite
                     let fields = {}
                     fields['id'] = order.attributes.client.id
                     fields['partner_id'] = order.attributes.client.id
@@ -266,7 +295,8 @@ odoo.define('tit_pos_order.PaymentScreenButton', function(require) {
                     }).then(function (commande_id) {
                         //création des lignes de commandes associé à la cmd en attente crée
                         for (let i=0; i<order.orderlines.models.length ; i++){
-                        let commandeLineId = rpc.query({
+                            
+                            let commandeLineId = rpc.query({
                             model: 'pos.commande.line',
                             method: 'create_commande_line',
                             args: [{
@@ -345,7 +375,14 @@ odoo.define('tit_pos_order.PaymentScreenButton', function(require) {
                                     'commande_nouvelle': commande_id
                                 }]
                                 }).then(function(u){
-                                l.reload_cmd_en_attente();
+                                    rpc.query({
+                                            model: 'res.partner',
+                                            method: 'search_read',
+                                            args: [[], [ 'property_account_position_id', 'company_type', 'child_ids', 'type', 'website', 'siren_company', 'nic_company','credit_limit', 'avoir_client']],
+                                        }).then(function (partner_result){
+                                            l.env.pos.partner = partner_result;
+                                            l.reload_cmd_en_attente(commande_ancienne);
+                                        });
                                })
                     });
                     
@@ -357,13 +394,33 @@ odoo.define('tit_pos_order.PaymentScreenButton', function(require) {
                     interface de commande et le tous soit à 0)
                     */ 
                     this.env.pos.delete_current_order();
-                    this.env.pos.add_new_order();
+                    var v = this.env.pos.add_new_order();
                     this.env.pos.delete_current_order();
-                }  }   } 
+                    this.env.pos.set_order(v);
+                
 
-                reload_cmd_en_attente(){
-                        /// tester  actualisation de la page de cmd en attente////
+        }
+        async IsCustomButton() {
+            this.validate_cmd_acompte();
+        } 
+
+                reload_cmd_en_attente(commande_ancienne){
+                    
+                        /*
+                        cette fonction permet d'actualiser la page des acomptes
+                        et faire appel à la fct d'actualisation de la page des cmd
+                        validées par vendeur
+                        @param: commande_ancienne : id de la commande qu'elle était coura,te
+                        */
                         var self = this; 
+                        rpc.query({
+                            model: 'pos.cmd_vendeur',
+                            method: 'delete_ancienne_cmd',
+                            args: [{
+                            'commande_ancienne': commande_ancienne, 
+                                                }]
+                           }).then(function(u){
+                           
                         rpc.query({
                             model: 'pos.commande',
                             method: 'search_read',
@@ -384,9 +441,31 @@ odoo.define('tit_pos_order.PaymentScreenButton', function(require) {
                             })
                         .then(function (orders_lines){
                             self.env.pos.commandes_lines = orders_lines;
-                        }); }); });
+                            self.reload_cmd_vendeur(); 
+                        }); }); });});
                         /// tester  actualisation de la page de cmd en attente////
-        }      
+        } 
+
+        reload_cmd_vendeur(){
+            
+                        /// tester  actualisation de la page de cmd en attente////
+                        var self = this; 
+                        rpc.query({
+                            model: 'pos.cmd_vendeur',
+                            method: 'search_read',
+                            args: [[['state','=','en_attente'],['config_id','=',self.env.pos.config_id]], []],
+                        })
+                        .then(function (orders){
+                            self.env.pos.cmd_vendeur = orders;
+                            rpc.query({
+                            model: 'pos.cmd_vendeur.line',
+                            method: 'search_read'
+                            })
+                        .then(function (orders_lines){
+                            self.env.pos.cmd_vendeur_lines = orders_lines;
+                        }); }); 
+                        /// tester  actualisation de la page de cmd en attente////
+        }       
     };
     Registries.Component.extend(PaymentScreen, CustomButtonPaymentScreen);
     return CustomButtonPaymentScreen;

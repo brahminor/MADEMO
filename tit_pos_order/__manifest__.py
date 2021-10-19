@@ -15,18 +15,23 @@
     "description": """
     """,
     "data": [
-        'security/ir.model.access.csv',
+        
         'security/user_security.xml',
         'templates/point_of_sale_assets.xml',
         'views/pos_commande_view.xml',
+        'views/pos_cmd_vendeur_view.xml',
     ],
+    'css': ['/static/src/css/cashier_screen.css'],
     'qweb': [
+            "static/src/xml/Screens/profile_page.xml",
             "static/src/xml/Screens/show_new_screen.xml",
             "static/src/xml/Screens/ValidationCommandePopup.xml",
             "static/src/xml/Screens/ValidationCommandeSucces.xml",
             "static/src/xml/Menu_screens/TicketScreenEnAttente.xml",
+            "static/src/xml/Menu_screens/TicketScreenCmdVendeur.xml",
             "static/src/xml/Menu_screens/category_screen.xml",
             "static/src/xml/Menu_screens/CustomTicketButtons.xml",
+            "static/src/xml/Menu_screens/CmdVendeurButton.xml",
             "static/src/xml/Menu_screens/CommandesValider.xml",
             "static/src/xml/Payment_screen/Invoice.xml",
             "static/src/xml/Payment_screen/PaymentScreen.xml",

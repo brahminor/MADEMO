@@ -7,7 +7,7 @@
                 <div class="controls">
 
                     <div class="buttons">
-                        <button class="button back" t-on-click="showScreen('ProductScreen')">
+                        <button class="button back" t-on-click="show_new_screeen()">
                             <i class="fa fa-angle-double-left fa-fw"></i>
                             <span class="back_text">Back</span>
                         </button>
@@ -21,7 +21,9 @@
                     <div class="header-row">
                         <div class="col start wide">Date</div>
                         <div class="col start wide">Client</div>
+                        <div class="col start wide">Total TTC</div>
                         <div class="col start wide">Acompte</div>
+                        <div class="col start wide">Montant dû</div>
                         <div class="col start wide">Session</div> 
                         <div class="col start wide">#</div> 
                         <div class="col start wide">#</div> 
@@ -35,21 +37,26 @@
                                  <t t-esc="cmd.partner_id[1]"/>
                             </div>
                             <div class="col start wide">
-                                 <t t-esc="cmd.acompte"/>
+                                 <t t-esc="cmd.amount_total.toFixed(2)"/>
                             </div>
-                            
+                            <div class="col start wide">
+                                 <t t-esc="cmd.acompte.toFixed(2)"/>
+                            </div>
+                            <div class="col start wide">
+                                 <t t-esc="cmd.montant_du.toFixed(2)"/>
+                            </div>
                             <div class="col start wide">
                                  <t t-esc="cmd.session_id[1]"/>
                             </div>
 
                             <div class="col start wide">
-                                <button class='button button_suite_cmd'  style="right:100%;" title="Rembourser" t-on-click="selectOrder(cmd, cmd.id)">
+                                <button class='button button_suite_cmd'  style="right:100%; background-color: #32CD32;"  title="Rembourser" t-on-click="selectOrder(cmd, cmd.id)">
                                    Régler le solde
                                 </button>
                             </div>
 
                             <div class="col start wide">
-                                <button class='button button_annuler_cmd'  style="right:100%;" title="Rembourser" t-on-click="annuler_acompte(cmd.id)">
+                                <button class='button button_annuler_cmd'  style="right:100%; background-color: #FFC0CB;" title="Rembourser" t-on-click="annuler_acompte(cmd.id)">
                                    Rembourser
                                 </button>
                             </div>
