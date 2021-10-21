@@ -57,7 +57,7 @@ odoo.define('tit_pos.screens', function(require) {
             return [['write_date','>', this.db.get_partner_write_date()]];
         },
     });
-
+console.log("models == \n", models);
 const POSSaveClientOverride = ClientDetailsEdit =>
         class extends ClientDetailsEdit {
             constructor() {
