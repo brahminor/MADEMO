@@ -81,44 +81,6 @@
                     </t>
                 </select>
             </div>
-
-
-        </xpath> 
-        <xpath expr="//div[@class='client-details-box clearfix']" position="inside" >
-                <br/>
-
-                <div class='client-name'>Contact</div>
-                <div class='client-details-box-contact-left'>
-                    <div class='client-detail'>
-                        <span class='label'>Nom</span>
-                        <t t-if="contact_associe">
-                            <input class='detail client-contact-name' name='contact_name' t-att-value='contact_associe.name' placeholder='Nom Prénom'  t-on-change="captureChange" attrs="{'invisible': [('company_type', '=', company)]}" ></input>
-                        </t>
-                        <t t-if="!contact_associe">
-                            <input class='detail client-contact-name' name='contact_name' placeholder='Nom Prénom'  t-on-change="captureChange" ></input>
-                        </t>   
-                    </div>
-                    <div class='client-detail'>
-                        <span class='label'>Téléphone</span>
-                        <t t-if="contact_associe">
-                            <input class='detail client-contact-name' name='contact_phone' t-att-value='contact_associe.phone' placeholder='N°Téléphone'  t-on-change="captureChange" ></input>
-                        </t>
-                        <t t-if="!contact_associe">
-                            <input class='detail client-contact-name' name='contact_phone' placeholder='N°Téléphone'  t-on-change="captureChange" ></input>
-                        </t>
-                    </div>
-                </div>
-                <div class='client-details-box-contact-right'>
-                    <div class='client-detail'>
-                        <span class='label'>Courriel</span>
-                        <t t-if="contact_associe">
-                            <input class='detail client-contact-name' name='contact_email' t-att-value='contact_associe.email' placeholder='Courriel'  t-on-change="captureChange" ></input>
-                        </t>
-                        <t t-if="!contact_associe">
-                            <input class='detail client-contact-name' name='contact_email' placeholder='Courriel'  t-on-change="captureChange" ></input>
-                        </t>
-                    </div>
-                </div>
         </xpath>
     </t>
 

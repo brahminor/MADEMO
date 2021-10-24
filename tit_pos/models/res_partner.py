@@ -16,7 +16,7 @@ class res_partner(models.Model):
         if position_fiscale:
             return position_fiscale[0].id
         return 0
-
+    
     @api.model
     def create_from_ui(self, partner):
         """ create or modify a partner from the point of sale ui.
@@ -37,23 +37,7 @@ class res_partner(models.Model):
         else:
             partners['lang'] = self.env.user.lang
             partner_id = self.create(partners).id
-        # Contact
-        if partner.get('company_type', '') == 'company':
-            contact_coordonnee = dict()
-            if 'contact_name' in contact:
-                contact_coordonnee['name'] = contact['contact_name']
-            if 'contact_phone' in contact:
-                contact_coordonnee['phone'] = contact['contact_phone']
-            if 'contact_email' in contact:
-                contact_coordonnee['email'] = contact['contact_email']
-            contact_coordonnee['parent_id'] = partner_id
-            contact_coordonnee['type'] = 'contact'
-            contact_coordonnee['company_type'] = 'person'
-            contact_id = partner.pop('contact_id', False)
-            if contact_id:
-                self.browse(contact_id).write(contact_coordonnee)
-            else:
-                contact_id = self.create(contact_coordonnee).id
+        
         return partner_id
 
     @api.model
