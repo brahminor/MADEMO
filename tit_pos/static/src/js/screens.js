@@ -7,13 +7,17 @@ odoo.define('tit_pos.screens', function(require) {
     var models = require('point_of_sale.models');
     const { useState } = owl.hooks;
     var rpc = require('web.rpc');
-        models.load_fields('res.partner',[ 'property_account_position_id', 'company_type', 'child_ids', 'type', 'website', 'siren_company', 'nic_company','credit_limit', 'avoir_client']);
+    
+    models.load_fields('res.partner',[ 'customer_rank', 'property_account_position_id', 'company_type', 'child_ids', 'type', 'website', 'siren_company', 'nic_company','credit_limit', 'avoir_client']);
     var _super_pos_model = models.PosModel.prototype;
     var _models = models.PosModel.prototype.models;
 
-    var _domain = [['customer_rank', '!=', 0]];
-    // partner model is the fifth element in models (index==4)
-    _models[4]['domain']  = function(self){ return _domain; };
+    for (var i=0; i<_models.length;i++) {
+        if(_models[i]['model'] == 'res.partner')
+        {
+            _models[i]['domain']  = function(self){ return [['customer_rank', '!=', 0]]};
+        }
+    }
 
     models.PosModel = models.PosModel.extend({
         /* reload the list of partner, returns as a promise that resolves if there were
@@ -48,7 +52,7 @@ odoo.define('tit_pos.screens', function(require) {
         prepare_new_partners_domain: function(){
             // overriding the existing function to change the domain of contact displaied
             var domain = _super_pos_model.prepare_new_partners_domain.apply(this, arguments);
-            domain.push(..._domain);
+            domain.push(['customer_rank', '!=', 0]);
             return domain;
         },
         prepare_new_partners_domain_all_contact: function(){
@@ -65,17 +69,8 @@ const POSSaveClientOverride = ClientDetailsEdit =>
             this.intFields = [ 'country_id', 'state_id', 'property_product_pricelist'];
             this.changes = {};
             var child = false;
-            if (this.props.partner && this.props.partner.child_ids) {
-                for (var i=0; i<this.props.partner.child_ids.length;i++) {
-                    var child_id = this.env.pos.db.get_partner_by_id(this.props.partner.child_ids[i])
-                    if (child_id.type === 'contact') {
-                        child = child_id
-                    }
-                }
-            }
-            if (child){
-                this.contact_associe = useState({id : child.id , name: child.name, phone: child_id.phone, email: child_id.email});
-                }
+            var child_id;
+            
             }
 
             /**

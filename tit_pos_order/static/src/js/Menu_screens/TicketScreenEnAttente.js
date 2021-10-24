@@ -105,7 +105,7 @@ const PosComponent = require('point_of_sale.PosComponent');
                                     method: 'verification_groupe_user_modified_in_pos',
                                     args: [l.env.pos.get_cashier().user_id[0]],
                                 }).then(function(u){
-                                    if (u !=3){
+                                    if ((u != 3) || (u != 7)){
                                         l.showPopup('ErrorPopup', {
                                             title:('Problème des droits d\'accès'),
                                             body:('Attention! \n Vous n\'avez pas la possibilité de rembourser l\'acompte , \n Veuillez contacter votre administrateur s.v.p ! ')

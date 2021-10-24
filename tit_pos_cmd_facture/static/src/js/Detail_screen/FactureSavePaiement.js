@@ -46,7 +46,7 @@ odoo.define('tit_pos_cmd_facture.FactureSavePaiement', function (require) {
             @param: 
                 -factures_non_payees: facture selectionnée en cours
             */
-            return factures_non_payees.avoir_client;
+            return factures_non_payees.avoir_client.toFixed(2);
              
         }
 
@@ -91,13 +91,15 @@ odoo.define('tit_pos_cmd_facture.FactureSavePaiement', function (require) {
                         args: [processedChanges['montant_saisi'], [facture_id], processedChanges['facture_recuperes_id'], self.env.pos.pos_session.id],
                             }).then(function (u) {
                                 if (u == 1){
-                                    self.showScreen('FacturesNonPayee');
+                                    
                                     rpc.query({
                                         model: 'account.move',
                                         method: 'search_read',
-                                        args: [[['payment_state','in',['not_paid','partial']],['move_type','in',['out_invoice','out_refund']],['state','!=','cancel'],['invoice_date_due', '<=',new Date()]], []],
+                                        args: [[['payment_state','in',['not_paid','partial']],['move_type','in',['out_invoice']],['state','!=','cancel'],['invoice_date_due', '<=',new Date()]], []],
                                     }).then(function (factures_non_payees){
                                         self.env.pos.factures_non_payees = factures_non_payees;
+                                        self.showScreen('FacturesNonPayee');
+                                        
                                         Gui.showPopup("ValidationCommandeSucces", {
                                            title : self.env._t("Le paiemet est enregistré avec succès"),
                                            confirmText: self.env._t("OK"),
@@ -108,7 +110,7 @@ odoo.define('tit_pos_cmd_facture.FactureSavePaiement', function (require) {
                                     rpc.query({
                                         model: 'account.move',
                                         method: 'search_read',
-                                        args: [[['payment_state','in',['not_paid','partial']],['move_type','in',['out_invoice','out_refund']],['state','!=','cancel'],['invoice_date_due', '<=',new Date()]], []],
+                                        args: [[['payment_state','in',['not_paid','partial']],['move_type','in',['out_invoice']],['state','!=','cancel'],['invoice_date_due', '<=',new Date()]], []],
                                     }).then(function (factures_non_payees){
                                         self.env.pos.factures_non_payees = factures_non_payees;
                                         self.showPopup('ErrorPopup', {

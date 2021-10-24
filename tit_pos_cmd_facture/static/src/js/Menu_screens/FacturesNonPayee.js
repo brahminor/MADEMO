@@ -13,7 +13,7 @@ odoo.define('tit_pos_cmd_facture.FacturesNonPayee', function (require) {
     models.load_models({
         model: 'account.move',
         fields: [],
-        domain: function(self){return [['payment_state','in',['not_paid','partial']],['move_type','in',['out_invoice','out_refund']],['state','!=','cancel'],['invoice_date_due', '<=',new Date()]]; },
+        domain: function(self){return [['payment_state','in',['not_paid','partial']],['move_type','in',['out_invoice']],['state','!=','cancel'],['invoice_date_due', '<=',new Date()]]; },
         loaded: function(self,factures_non_payees){
             self.factures_non_payees = factures_non_payees;
         },
@@ -38,6 +38,15 @@ odoo.define('tit_pos_cmd_facture.FacturesNonPayee', function (require) {
               .map((checkbox) => checkbox.value);
               
         }
+        show_new_screeen(){
+            /*
+            redirection vers la page de saisie de cmd mais vide sans ajout d'une nvlle 
+            cmd dans menu cmd du natif du pos
+            */
+            var v = this.env.pos.add_new_order();
+            this.env.pos.delete_current_order();
+            this.env.pos.set_order(v);  
+        }
         async click_paiement(){
             //payer la totalité des montants dû des factures sélectionnées
             const values = Array.from(document.querySelectorAll('input[type="checkbox"]'))
@@ -46,7 +55,14 @@ odoo.define('tit_pos_cmd_facture.FacturesNonPayee', function (require) {
               
                 var self = this;
                 let result = 0
-                rpc.query({
+                if(values.length <= 0){
+                    self.showPopup('ErrorPopup', {
+                        title:('Paiement impossible'),
+                        body:('Veuillez sélectionner au moins une facture !')
+                    });
+                }
+                else{
+                    rpc.query({
                         model: 'account.move',
                         method: 'get_amount_total',
                         args: [values],
@@ -63,21 +79,22 @@ odoo.define('tit_pos_cmd_facture.FacturesNonPayee', function (require) {
                                 method: 'get_client_et_avoir',
                                 args: [values],
                             }).then(function (res){
-                                self.showScreen('FactureSavePaiementMultiple', { facturess_selected: values, montant_total_du: montant_total, client_name:res.client_name, avoir_client: res.avoir_client});
+                                self.showScreen('FactureSavePaiementMultiple', { facturess_selected: values, montant_total_du: montant_total.toFixed(2), client_name:res.client_name, avoir_client: res.avoir_client.toFixed(2)});
                             });
                                 } 
                         
                     });
+                }
         }
 
         back() { 
             this.trigger('close-temp-screen'); 
         } 
         getDate(factures_non_payees) {
-            return moment(factures_non_payees.invoice_date).format('DD/MM/YYYY hh:mm A');
+            return moment(factures_non_payees.invoice_date).format('DD/MM/YYYY');
         }
         getDateEcheance(factures_non_payees){
-            return moment(factures_non_payees.invoice_date_due).format('DD/MM/YYYY hh:mm A');
+            return moment(factures_non_payees.invoice_date_due).format('DD/MM/YYYY');
         }
         get_payment_state(factures_non_payees){
             var etat_du_paiement = factures_non_payees.payment_state

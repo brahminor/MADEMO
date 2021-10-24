@@ -32,7 +32,6 @@ odoo.define('tit_pos_cmd_facture.FactureDetails', function (require) {
                 // si état = brouillon -->  mettre que  le bouton confirmer visible 
                 contents.find(".button_brouillon_fact_btn").addClass('oe_hidden');
                 contents.find(".button_confirm_fact_btn").removeClass('oe_hidden');
-                contents.find(".edit_client_selected").addClass('oe_hidden');
                 contents.find(".edit_client_a_selectionner").removeClass('oe_hidden');
                 contents.find(".button_enreg_paiement_btn").addClass('oe_hidden');  
             }
@@ -40,8 +39,7 @@ odoo.define('tit_pos_cmd_facture.FactureDetails', function (require) {
                 //si état = comptabilisé -->  mettre que  le bouton confirmer invisible
                 contents.find(".button_brouillon_fact_btn").removeClass('oe_hidden');
                 contents.find(".button_confirm_fact_btn").addClass('oe_hidden');
-                contents.find(".edit_client_a_selectionner").addClass('oe_hidden');
-                contents.find(".edit_client_selected").removeClass('oe_hidden');
+                $('.edit_client_a_selectionner').attr("style", "pointer-events: none;");
                 contents.find(".button_enreg_paiement_btn").removeClass('oe_hidden');
             }
         }
@@ -50,10 +48,10 @@ odoo.define('tit_pos_cmd_facture.FactureDetails', function (require) {
                 this.changes[event.target.name] = event.target.value;  
         }
         getDate(factures_non_payees) {
-            return moment(factures_non_payees.invoice_date).format('DD/MM/YYYY hh:mm A');
+            return moment(factures_non_payees.invoice_date).format('DD/MM/YYYY');
         }
         getDateEcheance(factures_non_payees){
-            return moment(factures_non_payees.invoice_date_due).format('DD/MM/YYYY hh:mm A');
+            return moment(factures_non_payees.invoice_date_due).format('DD/MM/YYYY');
         }
         get_payment_state(factures_non_payees){
             var etat_du_paiement = factures_non_payees.payment_state
@@ -93,25 +91,29 @@ odoo.define('tit_pos_cmd_facture.FactureDetails', function (require) {
                         rpc.query({
                             model: 'account.move',
                             method: 'search_read',
-                            args: [[['payment_state','in',['not_paid','partial']],['move_type','in',['out_invoice','out_refund']],['state','!=','cancel'],['invoice_date_due', '<=',new Date()]], []],
+                            args: [[['payment_state','in',['not_paid','partial']],['move_type','in',['out_invoice']],['state','!=','cancel'],['invoice_date_due', '<=',new Date()]], []],
                             })
                         .then(function (factures_non_payees){
                             self.env.pos.factures_non_payees = factures_non_payees;
+
                             /* après remettre en brouillon on met le bouton remettre au brouillon
                             et enregistrer paiement invisible et le bouton confirmer visible*/
                             var contents = $('.screen-facture');
                             contents.find(".button_brouillon_fact_btn").addClass('oe_hidden');
                             contents.find(".button_confirm_fact_btn").removeClass('oe_hidden');
                             contents.find(".button_enreg_paiement_btn").addClass('oe_hidden');
-                            contents.find(".edit_client_selected").addClass('oe_hidden');
-                            contents.find(".edit_client_a_selectionner").removeClass('oe_hidden');
+                            $('.edit_client_a_selectionner').attr("style", "pointer-events: all;");
                         });
                         });
         }
 
         async enregistrer_paiement(facture_id) {
+            /*cette fonction permet la redirection vers la page du paiement
+            de la facture 
+            @param:
+            -facture_id: id de la facture
+            */
             var self = this;
-            
             this.showScreen('FactureSavePaiement', { facture_selected: this.props.facture_selected });
 
         }
@@ -154,18 +156,22 @@ odoo.define('tit_pos_cmd_facture.FactureDetails', function (require) {
                         rpc.query({
                             model: 'account.move',
                             method: 'search_read',
-                            args: [[['payment_state','in',['not_paid','partial']],['move_type','in',['out_invoice','out_refund']],['state','!=','cancel'],['invoice_date_due', '<=',new Date()]], []],
+                            args: [[['payment_state','in',['not_paid','partial']],['move_type','in',['out_invoice']],['state','!=','cancel'],['invoice_date_due', '<=',new Date()]], []],
                         }).then(function (factures_non_payees){
                             self.env.pos.factures_non_payees = factures_non_payees;
+                            for (var i = 0; i < self.env.pos.factures_non_payees.length ; i++){    
+                                if(self.env.pos.factures_non_payees[i].id == self.props.facture_selected.id){          
+                                    self.props.facture_selected = self.env.pos.factures_non_payees[i]
+                                }
+                            }
+
                             /* après la confirmation on met le bouton confirmer invisible
                             et le bouton enregistrer paiement et remettre au brouillon visible*/
                             var contents = $('.screen-facture');
                             contents.find(".button_brouillon_fact_btn").removeClass('oe_hidden');
                             contents.find(".button_confirm_fact_btn").addClass('oe_hidden');
                             contents.find(".button_enreg_paiement_btn").removeClass('oe_hidden');
-                            contents.find(".edit_client_a_selectionner").addClass('oe_hidden');
-                            contents.find(".edit_client_selected").removeClass('oe_hidden');
-                            self.showScreen('FacturesNonPayee');
+                            $('.edit_client_a_selectionner').attr("style", "pointer-events: none;");
                         });
                     });
             });

@@ -28,6 +28,13 @@ odoo.define('tit_pos_cmd_facture.FactureSavePaiementMultiple', function (require
             */
             var self = this;
             let processedChanges = {};
+            /*
+            montant_a_payer: permet de garder le montant à payer lors du sélection de
+             plusieures factures à la fois, 
+             au 1er moment = montant globale (= la somme des montants dû des factures sélectionnées à payer)
+             au 2ème moment = montant dû modifié afin d'etre payé pour plusieurs factures sélectionnées à la fois)
+            */
+            var montant_a_payer = self.props.montant_total_du 
             try {
                 processedChanges['montant_total'] = 0
                 for (let [key, value] of Object.entries(this.changes)) {
@@ -35,6 +42,9 @@ odoo.define('tit_pos_cmd_facture.FactureSavePaiementMultiple', function (require
                     if (key == 'montant_total'){
                         // récupération du montant total à payer
                         processedChanges['montant_total'] = value
+                    }
+                    if (key == 'montant_saisi'){
+                        montant_a_payer = value
                     }
                 }
                 //récupération du journal choisi
@@ -54,11 +64,12 @@ odoo.define('tit_pos_cmd_facture.FactureSavePaiementMultiple', function (require
                 }
                 else{
                     var self = this;
+                    
                     //enregistrer le paiement des factures sélectionnées
                      rpc.query({
                         model: 'account.move', 
                         method: 'add_invoice_payment', 
-                        args: [self.props.montant_total_du, self.props.facturess_selected, processedChanges['facture_recuperes_id'], self.env.pos.pos_session.id],
+                        args: [montant_a_payer, self.props.facturess_selected, processedChanges['facture_recuperes_id'], self.env.pos.pos_session.id],
                             }).then(function (u) {
                                 
                                 if (u == 1){
@@ -66,7 +77,7 @@ odoo.define('tit_pos_cmd_facture.FactureSavePaiementMultiple', function (require
                                     rpc.query({
                                         model: 'account.move',
                                         method: 'search_read',
-                                        args: [[['payment_state','in',['not_paid','partial']],['move_type','in',['out_invoice','out_refund']],['state','!=','cancel'],['invoice_date_due', '<=',new Date()]], []],
+                                        args: [[['payment_state','in',['not_paid','partial']],['move_type','in',['out_invoice']],['state','!=','cancel'],['invoice_date_due', '<=',new Date()]], []],
                                     }).then(function (factures_non_payees){
                                         self.env.pos.factures_non_payees = factures_non_payees;
                                         Gui.showPopup("ValidationCommandeSucces", {
@@ -79,7 +90,7 @@ odoo.define('tit_pos_cmd_facture.FactureSavePaiementMultiple', function (require
                                     rpc.query({
                                         model: 'account.move',
                                         method: 'search_read',
-                                        args: [[['payment_state','in',['not_paid','partial']],['move_type','in',['out_invoice','out_refund']],['state','!=','cancel'],['invoice_date_due', '<=',new Date()]], []],
+                                        args: [[['payment_state','in',['not_paid','partial']],['move_type','in',['out_invoice']],['state','!=','cancel'],['invoice_date_due', '<=',new Date()]], []],
                                     }).then(function (factures_non_payees){
                                         self.env.pos.factures_non_payees = factures_non_payees;
                                         self.showPopup('ErrorPopup', {
