@@ -8,9 +8,10 @@ odoo.define('tit_pos_cmd_facture.FactureDetails', function (require) {
     const { posbus } = require('point_of_sale.utils');
     var models = require('point_of_sale.models');
     var rpc = require('web.rpc');
-
+    
     models.load_models({
     model:  'res.partner',
+    domain: function (self) { return [['customer_rank', '!=', 0]]; },
     fields: [],
         loaded: function(self, client_recuperes){
             self.client_recuperes = client_recuperes;
