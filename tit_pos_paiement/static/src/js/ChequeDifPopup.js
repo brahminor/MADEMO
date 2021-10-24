@@ -24,6 +24,7 @@ odoo.define('tit_pos_paiement.ChequeDifPopup', function(require) {
             this.inputRef.el.focus();
         }
         getPayload() {
+        //charge les données du state lorsque le popup est confirmé.
             var liste =[];
             liste.push(this.state.inputValue_1);
             liste.push(this.state.inputValue_2);

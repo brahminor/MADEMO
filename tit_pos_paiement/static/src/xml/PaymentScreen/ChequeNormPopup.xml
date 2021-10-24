@@ -11,7 +11,7 @@
                    <!-- Adding text field-->
                    <label class="check_label">N° de chéque : </label>
                    <br/>
-                   <input  type="text" t-model="state.inputValue" t-ref="input"></input>
+                   <input  type="text" t-model="state.inputValue" t-ref="input"  style="margin-top: 10px;"></input>
                    
                </span>
                <div class="footer">

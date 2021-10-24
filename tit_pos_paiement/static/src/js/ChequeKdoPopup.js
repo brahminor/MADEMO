@@ -23,6 +23,7 @@ odoo.define('tit_pos_paiement.ChequeKdoPopup', function(require) {
             this.inputRef.el.focus();
         }
         getPayload() {
+        //charge du state lorsque le popup est confirmé.
             return this.state.inputValue;
         }
     }
