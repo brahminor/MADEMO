@@ -77,7 +77,7 @@ class res_partner(models.Model):
             limite_credit = partner_id[0].credit_limit
         somme_montants_du = 0.0
         today = str(date.today())
-        factures_ids = self.env['account.move'].search([('partner_id','=',partner['id']),('invoice_date_due','<=',today)])
+        factures_ids = self.env['account.move'].search([('partner_id','=',partner['id']),('invoice_date_due','<',today)])
         for i in factures_ids:
             somme_montants_du += i.amount_residual
         if (limite_credit != 0 and limite_credit < somme_montants_du ):
