@@ -23,7 +23,7 @@
            <div class="with-badge" t-att-badge="count">
                <i class="fa fa-ticket" aria-hidden="true"></i>
            </div>
-           <div >Commandes réglées partiellement</div>
+           <div >Gestion des acomptes</div>
        </div>
    </t>
 

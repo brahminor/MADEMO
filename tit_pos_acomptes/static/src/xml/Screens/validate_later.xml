@@ -4,7 +4,7 @@
        <span class="control-button ctrl_btnvalidate_later" style="right:100%; background-color: #00BFFF; font-weight:bold;" >
            <i class="fa fa-clock-o"></i>
            <span> </span>
-           <span>Ajouter à la liste des commandes réglées partiellement</span>
+           <span>Acomptes</span>
        </span>
    </t>
 </templates>
