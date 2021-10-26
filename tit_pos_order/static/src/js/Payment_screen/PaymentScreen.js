@@ -162,7 +162,8 @@ odoo.define('tit_pos_order.PaymentScreenButton', function(require) {
                         if (valll === 'yes'){
                             // c'est à dire le comptable a débloqué ce client
                             var order = this.env.pos.get_order()
-                            var commande_ancienne = order.commande_id
+                            var commande_ancienne = 0;
+                            commande_ancienne = order.commande_id
                             // remove pending payments before finalizing the validation
                             for (let line of this.paymentLines) {
                                 if (!line.is_done()){
@@ -171,11 +172,20 @@ odoo.define('tit_pos_order.PaymentScreenButton', function(require) {
                             }
                             var self = this;
                             await this._finalizeValidation();
+                            console.log("numero de reçu === ",self.env.pos.get_order().name)
+                            console.log("commande_ancienne", commande_ancienne)
+                            /////////-------------------
                             rpc.query({
+                                model: 'pos.order',
+                                method: 'fill_commande_principale',
+                                args: [commande_ancienne, self.env.pos.get_order().name]
+                            }).then(function(u){
+                                /////////////--------------
+                            /*rpc.query({
                                 model: 'pos.commande',
                                 method: 'update_state_done',
                                 args: [commande_ancienne, self.env.pos.get_order().get_client().id, []]
-                            }).then(function(u){
+                            }).then(function(u){*/
                                  
                                 rpc.query({
                                     model: 'account.move',
@@ -190,10 +200,14 @@ odoo.define('tit_pos_order.PaymentScreenButton', function(require) {
                                     
                                     }).then(function (partner_result){
                                         self.env.pos.partner = partner_result;
+                                        self.env.pos.delete_current_order();
                                         self.reload_cmd_en_attente(commande_ancienne);
                                     });
                                     });
-                            })
+                            //})
+
+
+                        })
                         }
                         else {
                             // le cas ou la limite de crédit est atteind
@@ -214,17 +228,25 @@ odoo.define('tit_pos_order.PaymentScreenButton', function(require) {
                             }
                         }
                         await this._finalizeValidation();
-                        rpc.query({
-                            model: 'pos.commande',
-                            method: 'update_state_done',
-                            args: [commande_ancienne, self.env.pos.get_order().get_client().id, payment_lignes]
-                        }).then(function(u){
+                        
+                        /////////-------------------
                             rpc.query({
-                                model: 'account.move',
-                                method: 'search_read',
-                                args: [[['payment_state','in',['not_paid','partial']],['move_type','in',['out_invoice']],['state','!=','cancel'],['invoice_date_due', '<=',new Date()]], []],
-                            })
-                                .then(function (factures_non_payees){
+                                model: 'pos.order',
+                                method: 'fill_commande_principale',
+                                args: [commande_ancienne, self.env.pos.get_order().name]
+                            }).then(function(u){
+                                /////////////--------------
+                            /*rpc.query({
+                                model: 'pos.commande',
+                                method: 'update_state_done',
+                                args: [commande_ancienne, self.env.pos.get_order().get_client().id, []]
+                            }).then(function(u){*/
+                                 
+                                rpc.query({
+                                    model: 'account.move',
+                                    method: 'search_read',
+                                    args: [[['payment_state','in',['not_paid','partial']],['move_type','in',['out_invoice']],['state','!=','cancel'],['invoice_date_due', '<=',new Date()]], []],
+                                }).then(function (factures_non_payees){
                                     self.env.pos.factures_non_payees = factures_non_payees;
                                     rpc.query({
                                         model: 'res.partner',
@@ -233,11 +255,15 @@ odoo.define('tit_pos_order.PaymentScreenButton', function(require) {
                                     
                                     }).then(function (partner_result){
                                         self.env.pos.partner = partner_result;
+                                        self.env.pos.delete_current_order();
                                         self.reload_cmd_en_attente(commande_ancienne);
                                     });
-                                    
-                                });
-                            })
+                                    });
+                            //})
+
+
+                        })
+                            
                         this.reload_cmd_en_attente(commande_ancienne);
                     } 
                 } catch (error) {

@@ -21,8 +21,8 @@ class pos_commande(models.Model):
     company_id = fields.Many2one('res.company', related = "session_id.config_id.company_id")
     amount_total = fields.Monetary('Total TTC', compute = "get_amount_total", store = True)
     currency_id = fields.Many2one('res.currency', string = "Devise", default = lambda self: self.env.user.company_id.currency_id)
-    acompte = fields.Monetary('Acompte')
-    montant_du = fields.Monetary('Montant dû', compute='_get_montant', help='Ce champ contient le montant dû reste à payer ')
+    acompte = fields.Monetary('Acompte', help="Ce champ contient la somme des acomptes payées pour la commande courante")
+    montant_du = fields.Monetary('Montant dû', help='Ce champ contient le montant dû reste à payer ')
     payment_ids = fields.One2many('pos.payment_cmd', 'pos_commande_id', string='Paiements')
 
     def unlink(self):

@@ -29,6 +29,7 @@
             "static/src/xml/Screens/ValidationCommandeSucces.xml",
             "static/src/xml/Menu_screens/TicketScreenEnAttente.xml",
             "static/src/xml/Menu_screens/TicketScreenCmdVendeur.xml",
+            "static/src/xml/Menu_screens/ClientListScreen.xml",
             "static/src/xml/Menu_screens/category_screen.xml",
             "static/src/xml/Menu_screens/CustomTicketButtons.xml",
             "static/src/xml/Menu_screens/CmdVendeurButton.xml",

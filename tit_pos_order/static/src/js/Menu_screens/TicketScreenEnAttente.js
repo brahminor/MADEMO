@@ -105,7 +105,7 @@ const PosComponent = require('point_of_sale.PosComponent');
                                     method: 'verification_groupe_user_modified_in_pos',
                                     args: [l.env.pos.get_cashier().user_id[0]],
                                 }).then(function(u){
-                                    if ((u != 3) || (u != 7)){
+                                    if ((u != 3) && (u != 7)){
                                         l.showPopup('ErrorPopup', {
                                             title:('Problème des droits d\'accès'),
                                             body:('Attention! \n Vous n\'avez pas la possibilité de rembourser l\'acompte , \n Veuillez contacter votre administrateur s.v.p ! ')
@@ -151,8 +151,68 @@ const PosComponent = require('point_of_sale.PosComponent');
             this.load_commande(com, id);
         }
 
-        load_commande (commande_id, id) {
-            var order = this.env.pos.add_new_order();
+        async load_commande (commande_id, id) {
+            var self = this;
+            const { confirmed, payload: selectedOption } = await this.showPopup('SelectionPopup',
+                {
+                    title: this.env._t('Qu\'est ce que vous voulez faire ?'),
+                    list: [{id:"0", label: "Appliquer un acompte", item: false}, {id:"1", label: "Régler la commande", item: true}],
+                });
+                if(confirmed)
+                {
+                    console.log("confirmed")
+                    if (selectedOption){
+                    console.log("Régler la commande",selectedOption)
+
+                    var order = this.env.pos.add_new_order();
+                    //récupérer la commande selectinnée
+                    var commande = this.get_commande_by_id(id)
+                    //modifier client de la commande crée
+                    order.set_client(this.env.pos.db.get_partner_by_id(commande.partner_id[0]));
+                    // récupérer les order line de la commande selectionnée
+                    order.commande_id = id;
+                    var commande_line = this.get_commande_lines(commande.id)
+                    for (var i=0; i<commande_line.length;i++) {
+
+                        var product = this.env.pos.db.get_product_by_id(commande_line[i].product_id[0])
+                        if (commande_line[i].qty == 0){
+                            //ie produit acompte qu'on a enregistrer dans la liste des articles dans pos commande avec prix saisi et qte 0 mais dans pos order la qte est 1
+                            var qty = -1
+                        }else{
+                            var qty = parseFloat(commande_line[i].qty)
+                        }
+                        var discount = parseInt(commande_line[i].discount)
+                        var price = parseFloat(commande_line[i].price_unit)
+                        order.add_product(product,{quantity : qty, price : price, discount : discount})
+                    } 
+                    this.env.pos.delete_current_order();
+                    this.env.pos.set_order(order);
+                    
+                } else{
+                    console.log("Appliquer un acompte")
+                    rpc.query({
+                        model: 'product.product',
+                        method: 'get_product_acompte',
+                    }).then(function(id_produit_acompte){
+                        if(id_produit_acompte != 0){
+                           var order = self.env.pos.add_new_order();
+                        //modifier client de la commande crée
+                        console.log("clientn == ",commande_id.partner_id)
+                        order.set_client(self.env.pos.db.get_partner_by_id(commande_id.partner_id[0]));
+                        order.commande_id = id;
+                        self.env.pos.set_order(order);
+                        
+                        console.log("id produit acompte = ",id_produit_acompte)
+                        var product = self.env.pos.db.get_product_by_id(id_produit_acompte)
+                        console.log("prod === ",product)
+                        order.add_product(product,{quantity : 1, price : 0, discount : 0})
+                     
+                        }
+                        })
+                }
+                }
+            
+            /*var order = this.env.pos.add_new_order();
             //récupérer la commande selectinnée
             var commande = this.get_commande_by_id(id)
             //modifier client de la commande crée
@@ -183,16 +243,18 @@ const PosComponent = require('point_of_sale.PosComponent');
 
             this.env.pos.delete_current_order();
             this.env.pos.set_order(order);
-
+            */
         }
         show_new_screeen(){
             /*
             redirection vers la page de saisie de cmd mais vide sans ajout d'une nvlle 
             cmd dans menu cmd du natif du pos
             */
-            var v = this.env.pos.add_new_order();
-            this.env.pos.delete_current_order();
-            this.env.pos.set_order(v);  
+            this.showScreen('ProductScreen');
+            
+            // var v = this.env.pos.add_new_order();
+            // this.env.pos.delete_current_order();
+            // this.env.pos.set_order(v);  
         }
 
         
